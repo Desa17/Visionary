@@ -1,0 +1,528 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+
+<base target="_top">
+
+<style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+    }
+
+    h2 { text-align: center; }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+
+    textarea { resize: none; }
+
+    button {
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:active {
+      background: #0d47a1;
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      background: #90a4ae;
+      cursor: not-allowed;
+    }
+
+    .card {
+      background: #f4f6f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 17px;
+    }
+
+    #msg, #msgForm {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+
+
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+
+
+/* Zebra striping para la tabla de hoja del conductor */
+#tablaMovil tr:nth-child(even) {
+  background-color: #e3f2fd; /* color azul claro para filas pares */
+}
+
+#tablaMovil tr:nth-child(odd) {
+  background-color: #ffffff; /* color blanco para filas impares */
+}
+
+/* Opcional: resaltar fila al pasar el mouse */
+#tablaMovil tr:hover {
+  background-color: #99cefb; /* azul un poco más intenso */
+}
+
+
+
+
+
+
+
+
+
+/* Modo claro por defecto */
+body {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Botón modo oscuro */
+body.modo-oscuro {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Ejemplo para tarjetas */
+.card {
+    background-color: #f4f6f8;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.modo-oscuro .card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Tabla base */
+#tablaMovil {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Celdas y encabezados en modo claro */
+#tablaMovil th, #tablaMovil td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  font-size: 14px;
+  text-align: center;
+  background-color: inherit; /* hereda el fondo */
+  color: inherit; /* hereda color de texto */
+}
+
+/* Zebra striping modo claro */
+body:not(.modo-oscuro) #tablaMovil tr:nth-child(even) { background-color: #e3f2fd; }
+body:not(.modo-oscuro) #tablaMovil tr:nth-child(odd) { background-color: #ffffff; }
+
+/* Zebra striping modo oscuro */
+body.modo-oscuro #tablaMovil tr:nth-child(even) { background-color: #2c2c2c; }
+body.modo-oscuro #tablaMovil tr:nth-child(odd) { background-color: #1e1e1e; }
+
+/* Hover */
+body:not(.modo-oscuro) #tablaMovil tr:hover { background-color: #99cefb; }
+body.modo-oscuro #tablaMovil tr:hover { background-color: #444; }
+
+
+
+
+
+
+/* Contenedor de botones en línea */
+.botones-flex {
+    display: flex;
+    justify-content: space-between; /* uno a la izquierda, otro a la derecha */
+    gap: 10px; /* espacio entre botones */
+}
+
+.botones-flex button {
+    width: 48%; /* ajusta ancho para que quepan los dos */
+}
+
+
+
+/* Contenedor del título y el ícono */
+.header-flota {
+  position: relative;
+  text-align: center; /* centra el título */
+  margin-bottom: 15px;
+}
+
+
+/* Icono modo claro/oscuro */
+.modo-icono {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 22px;
+}
+
+
+.modo-icono:hover {
+  transform: scale(1.2); /* efecto pequeño al pasar el mouse */
+}
+
+
+.header-flota h2 {
+  margin: 0 auto; /* centra el h2 */
+}
+
+
+
+
+  </style>
+</head>
+
+<body>
+
+
+
+
+
+<div id="appContainer">
+
+  <div class="header-flota">
+<h2>🛺 Mi Torito Bacan</h2>
+ <span id="btnModo" onclick="toggleModo()" class="modo-icono">🌙</span>
+</div>
+
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <input id="user" placeholder="Nombre del móvil">
+
+  <div style="position:relative">
+    <input id="pass" type="password" placeholder="Clave">
+    <span
+      onmousedown="mostrarClave()"
+      onmouseup="ocultarClave()"
+      onmouseleave="ocultarClave()"
+      ontouchstart="mostrarClave()"
+      ontouchend="ocultarClave()"
+      style="
+        position:absolute;
+        right:15px;
+        top:50%;
+        transform:translateY(-50%);
+        font-size:24px;
+        cursor:pointer;
+        user-select:none;
+      ">
+      👁️
+    </span>
+  </div>
+
+  <button id="btn" onclick="entrar()">Ingresar</button>
+  <div id="msg"></div>
+</div>
+
+<!-- PANEL MOVIL -->
+<div id="panelMovil" style="display:none;">
+  <h2>📱 Panel del Móvil</h2>
+
+  <div class="card">
+    <p><strong>Móvil:</strong> <span id="movilNombre"></span></p>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="botones-flex">
+  <button onclick="mostrarKM()">📟 Actualizar KM</button>
+  <button onclick="mostrarMantenimiento()">🛠 Mantenimiento</button>
+   </div>
+ <button onclick="verHojaMovil()">📊 Ver estado del vehículo</button>
+
+  <!-- FORM KM -->
+  <div id="formKM" class="card" style="display:none;">
+    <h3>📟 Actualizar KM</h3>
+    <input id="kmTacometro" type="number" placeholder="KM actual">
+    <button onclick="enviarKM()">Guardar KM</button>
+    <div id="msgKM"></div>
+  </div>
+
+  <!-- FORM MANTENIMIENTO -->
+  <div id="formMant" class="card" style="display:none;">
+    <h3>🛠 Mantenimiento</h3>
+    <input id="mantenimiento" placeholder="Tipo de mantenimiento">
+    <input id="kmMantenimiento" type="number" placeholder="KM del mantenimiento">
+    <button onclick="enviarMantenimiento()">Guardar mantenimiento</button>
+    <div id="msgMant"></div>
+  </div>
+
+  <!-- REGISTROS -->
+
+
+
+
+
+<div id="hojaMovil" class="card" style="display:none;">
+  <h3>📄 Hoja del conductor</h3>
+
+  <p><strong>Fecha último KM:</strong> <span id="fechaTac"></span></p>
+  <p><strong>KM tacómetro:</strong> <span id="kmTac"></span></p>
+  <p><strong>KM recorridos / día:</strong> <span id="kmDia"></span></p>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#1976d2;color:white;">
+          <th>Mantenimiento</th>
+          <th>Fecha</th>
+          <th>KM</th>
+          <th>Próx. KM</th>
+          <th>Días</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tablaMovil"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="panelAdmin" style="display:none;">
+  <h2>👑 Panel Administrador</h2>
+  <div class="card">
+    <p>✔ Ver móviles</p>
+    <p>✔ Crear nuevo móvil</p>
+    <p>✔ Revisar mantenimientos</p>
+  </div>
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbybHuTduDa_H4sbYOgTXqGt9VTu7ByQn6sfJ5jQt7KJtCqv1_SW78i6QWbFurGKYN8I/exec"; // <--- aquí va tu WebApp URL
+
+let MOVIL_ACTUAL = "";
+
+async function entrar() {
+  const btn = document.getElementById("btn");
+  const msg = document.getElementById("msg");
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
+
+  if (!u || !p) { msg.innerText="⚠️ Completa usuario y clave"; return; }
+
+  btn.disabled=true; btn.innerText="Verificando..."; msg.innerText="";
+
+  try {
+    const res = await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"login",usuario:u,clave:p})});
+    const data = await res.json();
+    btn.disabled=false; btn.innerText="Ingresar";
+
+    if(!data.ok){ msg.innerText="❌ Usuario o clave incorrectos"; return; }
+
+    MOVIL_ACTUAL=data.movil;
+    document.getElementById("loginBox").style.display="none";
+    if(data.rol==="admin"){ document.getElementById("panelAdmin").style.display="block"; }
+    else{ document.getElementById("panelMovil").style.display="block"; document.getElementById("movilNombre").innerText=data.movil; }
+
+  } catch(err){
+    btn.disabled=false; btn.innerText="Ingresar"; msg.innerText="❌ Error de conexión";
+  }
+}
+
+function mostrarClave(){ pass.type="text"; }
+function ocultarClave(){ pass.type="password"; }
+document.addEventListener("keydown", function(e){ if(e.key==="Enter" && loginBox.style.display!=="none") entrar(); });
+function cerrarSesion() {
+  document.getElementById("panelMovil").style.display="none";
+  document.getElementById("panelAdmin").style.display="none";
+  document.getElementById("loginBox").style.display="block";
+  MOVIL_ACTUAL="";
+  document.getElementById("user").value="";
+  document.getElementById("pass").value="";
+  document.getElementById("formKM").style.display="none";
+  document.getElementById("formMant").style.display="none";
+  document.getElementById("hojaMovil").style.display="none";
+  document.getElementById("msgKM").innerText="";
+  document.getElementById("msgMant").innerText="";
+  document.getElementById("kmTacometro").value="";
+  document.getElementById("mantenimiento").value="";
+  document.getElementById("kmMantenimiento").value="";
+}
+
+function ocultarTodo(){ document.getElementById("formKM").style.display="none"; document.getElementById("formMant").style.display="none"; document.getElementById("hojaMovil").style.display="none"; }
+function mostrarKM(){ ocultarTodo(); document.getElementById("formKM").style.display="block"; }
+function mostrarMantenimiento(){ ocultarTodo(); document.getElementById("formMant").style.display="block"; }
+
+async function enviarKM(){
+  const kmInput=document.getElementById("kmTacometro");
+  const msgKM=document.getElementById("msgKM");
+  const km=kmInput.value;
+  if(!km){ msgKM.innerText="⚠️ Ingresa KM"; return; }
+  msgKM.innerText="⏳ Guardando...";
+  try{
+    await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"guardar",movil:MOVIL_ACTUAL,kmTacometro:km,mantenimientoTexto:"",kmMantenimiento:""})});
+    msgKM.innerText="✅ KM actualizado"; kmInput.value="";
+  }catch(err){ msgKM.innerText="❌ Error"; }
+}
+
+async function enviarMantenimiento(){
+  const mantInput=document.getElementById("mantenimiento");
+  const kmInput=document.getElementById("kmMantenimiento");
+  const msgMant=document.getElementById("msgMant");
+  const mant=mantInput.value; const km=kmInput.value;
+  if(!mant||!km){ msgMant.innerText="⚠️ Completa todo"; return; }
+  msgMant.innerText="⏳ Guardando...";
+  try{
+    await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"guardar",movil:MOVIL_ACTUAL,kmTacometro:"",mantenimientoTexto:mant,kmMantenimiento:km})});
+    msgMant.innerText="✅ Mantenimiento registrado"; mantInput.value=""; kmInput.value="";
+  }catch(err){ msgMant.innerText="❌ Error"; }
+}
+
+async function verHojaMovil(){
+  ocultarTodo();
+  const tabla = document.getElementById("tablaMovil");
+  const fechaTacEl = document.getElementById("fechaTac");
+  const kmTacEl = document.getElementById("kmTac");
+  const kmDiaEl = document.getElementById("kmDia");
+
+  // ✅ Mostrar panel inmediatamente con mensaje de carga
+  document.getElementById("hojaMovil").style.display = "block";
+  fechaTacEl.innerText = "-";
+  kmTacEl.innerText = "-";
+  kmDiaEl.innerText = "-";
+  tabla.innerHTML = "<tr><td colspan='6'>⏳ Cargando...</td></tr>";
+
+  try {
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({action:"verHoja",movil:MOVIL_ACTUAL})
+    });
+    const data = await res.json();
+
+    if(!data.ok){
+      tabla.innerHTML = "<tr><td colspan='6'>No hay datos</td></tr>";
+      return;
+    }
+
+    // Actualizar los datos reales
+    fechaTacEl.innerText = data.fechaTac || "-";
+    kmTacEl.innerText = data.kmTac || "-";
+    kmDiaEl.innerText = data.kmDia || "-";
+
+    if(!data.registros.length){
+      tabla.innerHTML = "<tr><td colspan='6'>Sin registros</td></tr>";
+      return;
+    }
+
+    tabla.innerHTML = data.registros.map(r =>
+      `<tr>
+        <td>${r.mantenimiento}</td>
+        <td>${r.fecha}</td>
+        <td>${r.km}</td>
+        <td>${r.proxKM}</td>
+        <td>${r.dias}</td>
+        <td>${r.estado}</td>
+      </tr>`).join("");
+
+  } catch(err) {
+    tabla.innerHTML = "<tr><td colspan='6'>❌ Error de conexión</td></tr>";
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function toggleModo() {
+    document.body.classList.toggle("modo-oscuro");
+    
+    const icono = document.getElementById("btnModo");
+    if(document.body.classList.contains("modo-oscuro")) {
+        localStorage.setItem("modo", "oscuro");
+        icono.textContent = "☀️"; // icono sol para modo oscuro
+    } else {
+        localStorage.setItem("modo", "claro");
+        icono.textContent = "🌙"; // icono luna para modo claro
+    }
+}
+
+// Aplicar modo guardado al cargar
+window.addEventListener("DOMContentLoaded", () => {
+    const modoGuardado = localStorage.getItem("modo");
+    const icono = document.getElementById("btnModo");
+    if(modoGuardado === "oscuro") {
+        document.body.classList.add("modo-oscuro");
+        icono.textContent = "☀️";
+    } else {
+        icono.textContent = "🌙";
+    }
+});
+
+
+</script>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log("Service Worker registrado"))
+    .catch(err => console.log("Error:", err));
+}
+</script>
+
+
+</body>
+</html>
