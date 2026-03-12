@@ -361,6 +361,10 @@ async function entrar() {
     if(!data.ok){ msg.innerText="❌ Usuario o clave incorrectos"; return; }
 
     MOVIL_ACTUAL=data.movil;
+    
+    localStorage.setItem("movilSesion", data.movil);
+localStorage.setItem("rolSesion", data.rol);
+
     document.getElementById("loginBox").style.display="none";
     if(data.rol==="admin"){ document.getElementById("panelAdmin").style.display="block"; }
     else{ document.getElementById("panelMovil").style.display="block"; document.getElementById("movilNombre").innerText=data.movil; }
@@ -374,6 +378,11 @@ function mostrarClave(){ pass.type="text"; }
 function ocultarClave(){ pass.type="password"; }
 document.addEventListener("keydown", function(e){ if(e.key==="Enter" && loginBox.style.display!=="none") entrar(); });
 function cerrarSesion() {
+  
+  // borrar sesión guardada
+  localStorage.removeItem("movilSesion");
+  localStorage.removeItem("rolSesion");
+  
   document.getElementById("panelMovil").style.display="none";
   document.getElementById("panelAdmin").style.display="none";
   document.getElementById("loginBox").style.display="block";
@@ -501,14 +510,38 @@ function toggleModo() {
 
 // Aplicar modo guardado al cargar
 window.addEventListener("DOMContentLoaded", () => {
+
+    // ===== MODO OSCURO =====
     const modoGuardado = localStorage.getItem("modo");
     const icono = document.getElementById("btnModo");
+
     if(modoGuardado === "oscuro") {
         document.body.classList.add("modo-oscuro");
         icono.textContent = "☀️";
     } else {
         icono.textContent = "🌙";
     }
+
+
+    // ===== RESTAURAR SESIÓN =====
+    const movilGuardado = localStorage.getItem("movilSesion");
+    const rolGuardado = localStorage.getItem("rolSesion");
+
+    if(movilGuardado){
+
+        MOVIL_ACTUAL = movilGuardado;
+
+        document.getElementById("loginBox").style.display="none";
+
+        if(rolGuardado === "admin"){
+            document.getElementById("panelAdmin").style.display="block";
+        }else{
+            document.getElementById("panelMovil").style.display="block";
+            document.getElementById("movilNombre").innerText = movilGuardado;
+        }
+
+    }
+
 });
 
 
