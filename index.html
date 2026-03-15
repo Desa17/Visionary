@@ -285,7 +285,8 @@ body.modo-oscuro #tablaMovil tr:hover { background-color: #444; }
   <!-- FORM MANTENIMIENTO -->
   <div id="formMant" class="card" style="display:none;">
     <h3>🛠 Mantenimiento</h3>
-    <input id="mantenimiento" placeholder="Tipo de mantenimiento">
+    <input id="mantenimientoInput" placeholder="Tipo de mantenimiento" onkeyup="buscarMantenimiento()">
+<div id="listaMantenimientos"></div>
     <input id="kmMantenimiento" type="number" placeholder="KM del mantenimiento">
     <button onclick="enviarMantenimiento()">Guardar mantenimiento</button>
     <div id="msgMant"></div>
@@ -341,6 +342,20 @@ body.modo-oscuro #tablaMovil tr:hover { background-color: #444; }
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbybHuTduDa_H4sbYOgTXqGt9VTu7ByQn6sfJ5jQt7KJtCqv1_SW78i6QWbFurGKYN8I/exec"; // <--- aquí va tu WebApp URL
 
+  let listaMantenimientos = [];
+
+function cargarMantenimientos(movil){
+
+  google.script.run
+  .withSuccessHandler(function(data){
+    listaMantenimientos = data;
+  })
+  .obtenerMantenimientos(movil);
+
+}
+  
+
+  
 let MOVIL_ACTUAL = "";
 
 async function entrar() {
@@ -361,6 +376,8 @@ async function entrar() {
     if(!data.ok){ msg.innerText="❌ Usuario o clave incorrectos"; return; }
 
     MOVIL_ACTUAL=data.movil;
+    
+    cargarMantenimientos(data.movil);
     
     localStorage.setItem("movilSesion", data.movil);
 localStorage.setItem("rolSesion", data.rol);
@@ -395,7 +412,7 @@ function cerrarSesion() {
   document.getElementById("msgKM").innerText="";
   document.getElementById("msgMant").innerText="";
   document.getElementById("kmTacometro").value="";
-  document.getElementById("mantenimiento").value="";
+  document.getElementById("mantenimientoInput").value="";
   document.getElementById("kmMantenimiento").value="";
 }
 
@@ -416,7 +433,7 @@ async function enviarKM(){
 }
 
 async function enviarMantenimiento(){
-  const mantInput=document.getElementById("mantenimiento");
+  const mantInput=document.getElementById("mantenimientoInput");
   const kmInput=document.getElementById("kmMantenimiento");
   const msgMant=document.getElementById("msgMant");
   const mant=mantInput.value; const km=kmInput.value;
@@ -545,8 +562,68 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  function buscarMantenimiento(){
+
+  const texto = document.getElementById("mantenimientoInput").value.toLowerCase();
+
+  const contenedor = document.getElementById("listaMantenimientos");
+
+  contenedor.innerHTML = "";
+
+  if(texto.length < 1) return;
+
+  const resultados = listaMantenimientos.filter(m =>
+    m.toLowerCase().startsWith(texto)
+  );
+
+  resultados.forEach(m => {
+
+    const div = document.createElement("div");
+
+    div.innerText = m;
+
+    div.onclick = function(){
+      document.getElementById("mantenimientoInput").value = m;
+      contenedor.innerHTML = "";
+    };
+
+    contenedor.appendChild(div);
+
+  });
+
+}
 </script>
-</div>
+
 
 <script>
 if ('serviceWorker' in navigator) {
@@ -554,6 +631,17 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log("Service Worker registrado"))
     .catch(err => console.log("Error:", err));
 }
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 
