@@ -269,8 +269,8 @@ body.modo-oscuro #tablaMovil tr:hover { background-color: #444; }
 
   <!-- BOTONES -->
   <div class="botones-flex">
-  <button onclick="mostrarKM()">📟 Actualizar KM</button>
-  <button onclick="mostrarMantenimiento()">🛠 Mantenimiento</button>
+  <button onclick="mostrarKM()">📟<br>Actualizar KM</button>
+  <button onclick="mostrarMantenimiento()">🛠<br> Mantenimiento</button>
    </div>
  <button onclick="verHojaMovil()">📊 Ver estado del vehículo</button>
 
@@ -344,13 +344,22 @@ const API_URL = "https://script.google.com/macros/s/AKfycbybHuTduDa_H4sbYOgTXqGt
 
   let listaMantenimientos = [];
 
-function cargarMantenimientos(movil){
+async function cargarMantenimientos(movil){
 
-  google.script.run
-  .withSuccessHandler(function(data){
-    listaMantenimientos = data;
-  })
-  .obtenerMantenimientos(movil);
+  try{
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        action:"mantenimientos",
+        movil:movil
+      })
+    });
+
+    listaMantenimientos = await res.json();
+
+  }catch(err){
+    console.log("Error cargando mantenimientos");
+  }
 
 }
   
