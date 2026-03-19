@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1976d2">
+
+<base target="_top">
+
+<!-- ICONOS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+html{
+  -webkit-text-size-adjust: 100%;
+}
+
+body{
+font-family:Arial;
+margin:0;
+background:#f5f6fa;
+}
+
+/* HEADER */
+
+header{
+background:#1976d2;
+color:white;
+padding:15px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+position:relative;
+}
+
+#btnModo{
+position:absolute;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:20px;
+}
+
+/* CONTENEDOR */
+
+.container{
+max-width:480px;
+margin:auto;
+padding:20px;
+}
+
+/* INPUTS */
+
+input,button{
+width:100%;
+padding:14px;
+margin:10px 0;
+font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+box-sizing:border-box;
+}
+
+/* BOTONES */
+
+button{
+background:#1976d2;
+color:white;
+border:none;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#0d47a1;
+}
+
+/* TARJETAS */
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* BOTONES PANEL */
+
+.panel-botones{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
+
+.panel-botones button{
+height:70px;
+font-size:14px;
+}
+
+.panel-botones i{
+font-size:20px;
+margin-bottom:4px;
+}
+
+/* TABLA */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th{
+background:#1976d2;
+color:white;
+padding:6px;
+font-size:12px;
+}
+
+td{
+border:1px solid #ccc;
+padding:6px;
+font-size:12px;
+text-align:center;
+}
+
+/* ESTADOS */
+
+.estado-ok{
+color:#2e7d32;
+font-weight:bold;
+}
+
+.estado-alerta{
+color:#ef6c00;
+font-weight:bold;
+}
+
+.estado-critico{
+color:#c62828;
+font-weight:bold;
+}
+
+/* MODO OSCURO */
+
+body.dark{
+background:#121212;
+color:white;
+}
+
+body.dark .card{
+background:#1e1e1e;
+}
+
+body.dark input{
+background:#2c2c2c;
+color:white;
+border:1px solid #555;
+}
+
+body.dark td{
+border:1px solid #444;
+}
+
+.tabs{
+display:flex;
+margin:10px 0;
+gap:5px;
+}
+
+.tabs button{
+flex:1;
+padding:10px;
+background:#ccc;
+color:#000;
+font-weight:bold;
+}
+
+.tabs button.activo{
+background:#1976d2;
+color:white;
+}
+
+
+
+.tabla-scroll{
+  overflow-x:auto;
+}
+
+
+
+.verObs{
+  color:#1976d2;
+  cursor:pointer;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  
+
+<i class="fa-solid fa-bolt"></i> VISIONARY <i class="fa-solid fa-bolt"></i> 
+
+<span id="btnModo" onclick="toggleModo()">
+<i class="fa-solid fa-moon"></i>
+</span>
+
+</header>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginBox">
+
+<input id="user" placeholder="Nombre del móvil">
+
+<div style="position:relative">
+
+<input id="pass" type="password" placeholder="Clave">
+
+<span onclick="togglePass()" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;">
+<i class="fa-solid fa-eye"></i>
+</span>
+
+</div>
+
+<button id="btn" onclick="entrar()">
+<i class="fa-solid fa-right-to-bracket"></i> Ingresar
+</button>
+
+<div id="msg"></div>
+
+</div>
+
+<!-- PANEL MOVIL -->
+
+<div id="panelMovil" style="display:none">
+
+<h2><i class="fa-solid fa-mobile-screen"></i> Panel del Móvil</h2>
+
+<div class="card">
+<strong>Móvil:</strong> <span id="movilNombre"></span>
+</div>
+
+<div class="panel-botones">
+
+<button onclick="mostrarKM()">
+<i class="fa-solid fa-gauge-high"></i><br>
+Actualizar KM
+</button>
+
+<button onclick="mostrarMantenimiento()">
+<i class="fa-solid fa-screwdriver-wrench"></i><br>
+Mantenimiento
+</button>
+
+</div>
+
+<button onclick="verHojaMovil()">
+<i class="fa-solid fa-chart-line"></i> Estado del vehículo
+</button>
+
+<!-- FORM KM -->
+
+<div id="formKM" class="card" style="display:none">
+
+<h3>Actualizar KM</h3>
+
+<input id="kmTacometro" type="number" placeholder="KM actual">
+
+<button onclick="enviarKM()">
+<i class="fa-solid fa-save"></i> Guardar KM
+</button>
+
+<div id="msgKM"></div>
+
+</div>
+
+<!-- FORM MANTENIMIENTO -->
+
+<div id="formMant" class="card" style="display:none">
+
+<h3>Mantenimiento</h3>
+
+<input id="mantenimientoInput" placeholder="Tipo de mantenimiento" onkeyup="buscarMantenimiento()">  <div id="listaMantenimientos"></div>
+
+<input id="kmMantenimiento" type="number" placeholder="KM del mantenimiento">
+
+<input id="obsMantenimiento" placeholder="Observaciones (opcional)">
+
+<button onclick="enviarMantenimiento()">
+<i class="fa-solid fa-save"></i> Guardar mantenimiento
+</button>
+
+<div id="msgMant"></div>
+
+</div>
+
+<!-- TABLA -->
+
+<div id="hojaMovil" class="card" style="display:none">
+
+<h3>Estado del vehículo</h3>
+
+<p><strong>Fecha último KM:</strong> <span id="fechaTac"></span></p>
+<p><strong>KM tacómetro:</strong> <span id="kmTac"></span></p>
+<p><strong>KM / día:</strong> <span id="kmDia"></span></p>
+
+<div class="tabs">
+
+<button onclick="mostrarEstado()" id="btnEstado" class="activo">
+Estado
+</button>
+
+<button onclick="mostrarHistorial()" id="btnHistorial">
+Fecha
+</button>
+
+</div>
+
+<div class="tabla-scroll">
+<table id="tablaEstadoContenedor">
+
+<thead>
+
+<tr>
+<th>Mantenimiento</th>
+<th>Próx KM</th>
+<th>Días</th>
+<th>Estado</th>
+<th>Obs</th>
+</tr>
+
+</thead>
+
+<tbody id="tablaEstado"></tbody>
+
+</table>
+</div>
+
+<div id="historialMant" style="display:none">
+<div class="tabla-scroll">
+<table>
+
+<thead>
+<tr>
+<th>Mantenimiento</th>
+<th>Fecha</th>
+<th>KM</th>
+<th>Obs</th>
+</tr>
+</thead>
+
+<tbody id="tablaHistorial"></tbody>
+
+</table>
+</div>
+</div>
+
+
+</div>
+
+
+
+<button onclick="cerrarSesion()">
+<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+</button>
+
+</div>
+
+<!-- PANEL ADMIN -->
+
+<div id="panelAdmin" style="display:none">
+
+<h2><i class="fa-solid fa-user-shield"></i> Panel Administrador</h2>
+
+<div class="card">
+
+<div class="panel-botones">
+
+<button onclick="mostrarCrearUsuario()">
+<i class="fa-solid fa-user-plus"></i><br>
+Crear usuario
+</button>
+
+<button onclick="mostrarUsuarios()">
+<i class="fa-solid fa-users"></i><br>
+Usuarios
+</button>
+
+<button onclick="mostrarMantenimientosAdmin()">
+<i class="fa-solid fa-screwdriver-wrench"></i><br>
+Mantenimientos
+</button>
+
+<button onclick="cerrarSesion()">
+<i class="fa-solid fa-right-from-bracket"></i><br>
+Salir
+</button>
+
+</div>
+
+</div>
+
+<!-- SECCIONES -->
+<div id="crearUsuarioBox" class="card" style="display:none">
+
+<h3>Crear usuario</h3>
+
+<input id="nombre" placeholder="Nombre del conductor">
+<input id="placa" placeholder="Placa (usuario)">
+<input id="clave" placeholder="Contraseña">
+<input id="celular" placeholder="Número de celular">
+
+<select id="rol">
+  <option value="conductor">Conductor</option>
+  <option value="supervisor">Supervisor</option>
+  <option value="admin">Admin</option>
+</select>
+
+<button onclick="crearUsuario()">Guardar usuario</button>
+
+<div id="msgAdmin"></div>
+
+</div>
+
+<div id="usuariosBox" class="card" style="display:none">
+<h3>Usuarios</h3>
+<div id="listaUsuarios"></div>
+</div>
+
+<div id="mantenimientosAdminBox" class="card" style="display:none">
+<h3>Mantenimientos</h3>
+<p>Aquí luego puedes ver todos los mantenimientos globales</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+  
+
+  
+
+const API_URL="https://script.google.com/macros/s/AKfycbybHuTduDa_H4sbYOgTXqGt9VTu7ByQn6sfJ5jQt7KJtCqv1_SW78i6QWbFurGKYN8I/exec"
+
+  let listaMantenimientos=[]
+
+async function cargarMantenimientos(movil){
+
+try{
+
+const res=await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+action:"mantenimientos",
+movil:movil
+})
+})
+
+listaMantenimientos=await res.json()
+
+}catch{
+
+console.log("Error cargando mantenimientos")
+
+}
+
+}
+
+
+let MOVIL_ACTUAL=""
+
+let btnEstado, btnHistorial
+
+
+
+async function entrar(){
+
+const btn=document.getElementById("btn")
+const msg=document.getElementById("msg")
+
+const u=user.value
+const p=pass.value
+
+if(!u||!p){
+msg.innerText="Completa usuario y clave"
+return
+}
+
+btn.disabled=true
+btn.innerText="Verificando..."
+
+try{
+
+const res=await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+action:"login",
+usuario:u,
+clave:p
+})
+})
+
+const data=await res.json()
+
+btn.disabled=false
+btn.innerText="Ingresar"
+
+if(!data.ok){
+
+msg.innerText="Usuario o clave incorrectos"
+return
+
+}
+
+MOVIL_ACTUAL=data.movil
+cargarMantenimientos(data.movil)
+
+localStorage.setItem("movilSesion", data.movil)
+localStorage.setItem("rolSesion", data.rol)
+
+loginBox.style.display="none"
+
+if(data.rol==="admin"){
+panelAdmin.style.display="block"
+}else{
+panelMovil.style.display="block"
+movilNombre.innerText=data.movil
+}
+
+}catch{
+
+msg.innerText="Error conexión"
+
+}
+
+}
+
+function togglePass(){
+
+if(pass.type==="password"){
+pass.type="text"
+}else{
+pass.type="password"
+}
+
+}
+
+function toggleModo(){
+
+document.body.classList.toggle("dark")
+
+if(document.body.classList.contains("dark")){
+localStorage.setItem("modo","oscuro")
+}else{
+localStorage.setItem("modo","claro")
+}
+
+}
+
+
+function cerrarSesion(){
+
+localStorage.removeItem("movilSesion")
+localStorage.removeItem("rolSesion")
+
+panelMovil.style.display="none"
+panelAdmin.style.display="none"
+loginBox.style.display="block"
+
+MOVIL_ACTUAL=""
+
+}
+function mostrarKM(){
+
+document.getElementById("formKM").style.display="block"
+document.getElementById("formMant").style.display="none"
+document.getElementById("hojaMovil").style.display="none"
+
+}
+
+function mostrarMantenimiento(){
+
+document.getElementById("formMant").style.display="block"
+document.getElementById("formKM").style.display="none"
+document.getElementById("hojaMovil").style.display="none"
+
+}
+
+
+
+async function enviarKM(){
+
+const btn=document.querySelector("#formKM button")
+const km=document.getElementById("kmTacometro").value
+const msg=document.getElementById("msgKM")
+
+if(!km){
+msg.innerText="Ingrese KM"
+return
+}
+
+btn.disabled=true
+msg.innerText="Guardando..."
+
+try{
+
+await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+action:"guardar",
+movil:MOVIL_ACTUAL,
+kmTacometro:km,
+mantenimientoTexto:"",
+kmMantenimiento:""
+})
+})
+
+msg.innerText="KM actualizado"
+document.getElementById("kmTacometro").value=""
+
+}catch{
+
+msg.innerText="Error guardando"
+
+}
+
+btn.disabled=false
+
+}
+
+async function enviarMantenimiento(){
+
+const mant=document.getElementById("mantenimientoInput").value
+const km=document.getElementById("kmMantenimiento").value
+const obs=document.getElementById("obsMantenimiento").value
+const msg=document.getElementById("msgMant")
+
+if(!mant||!km){
+msg.innerText="Complete datos"
+return
+}
+
+msg.innerText="Guardando..."
+
+try{
+
+await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+action:"guardar",
+movil:MOVIL_ACTUAL,
+kmTacometro:"",
+mantenimientoTexto:mant,
+kmMantenimiento:km,
+observacion:obs
+})
+})
+
+msg.innerText="Mantenimiento guardado"
+
+document.getElementById("mantenimientoInput").value=""
+document.getElementById("kmMantenimiento").value=""
+document.getElementById("obsMantenimiento").value=""
+}catch{
+
+msg.innerText="Error guardando"
+
+}
+
+}
+
+async function verHojaMovil(){
+
+document.getElementById("formKM").style.display="none"
+document.getElementById("formMant").style.display="none"
+document.getElementById("hojaMovil").style.display="block"
+
+const tablaEstado=document.getElementById("tablaEstado")
+const tablaHistorial=document.getElementById("tablaHistorial")
+
+tablaEstado.innerHTML="<tr><td colspan='5'>Cargando...</td></tr>"
+
+try{
+
+const res=await fetch(API_URL,{
+method:"POST",
+body:JSON.stringify({
+action:"verHoja",
+movil:MOVIL_ACTUAL
+})
+})
+
+const data=await res.json()
+
+document.getElementById("fechaTac").innerText=data.fechaTac || "-"
+document.getElementById("kmTac").innerText=data.kmTac || "-"
+document.getElementById("kmDia").innerText=data.kmDia || "-"
+
+if(!data.ok){
+
+tabla.innerHTML="<tr><td colspan='6'>Sin datos</td></tr>"
+return
+
+}
+
+tablaEstado.innerHTML=data.registros.map(r=>`
+
+<tr>
+<td>${r.mantenimiento}</td>
+<td>${r.proxKM}</td>
+<td>${r.dias}</td>
+<td class="${
+r.estado==="OK" ? "estado-ok" :
+r.estado==="ALERTA" ? "estado-alerta" :
+"estado-critico"
+}">
+${r.estado}
+</td>
+
+<td><span class="verObs" onclick="verObs(\`${r.observacion || "Sin observación"}\`)">ver</span></td>
+
+</tr>
+
+`).join("")
+
+tablaHistorial.innerHTML=data.registros.map(r=>`
+
+<tr>
+<td>${r.mantenimiento}</td>
+<td>${r.fecha}</td>
+<td>${r.km}</td>
+
+<td><span class="verObs" onclick="verObs(\`${r.observacion || "Sin observación"}\`)">ver</span></td>
+
+</tr>
+
+`).join("")
+
+}catch{
+
+tablaEstado.innerHTML="<tr><td colspan='5'>Error conexión</td></tr>"
+
+}
+
+mostrarEstado()
+
+}
+
+
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+// BOTONES (IMPORTANTE)
+btnEstado = document.getElementById("btnEstado")
+btnHistorial = document.getElementById("btnHistorial")
+
+// MODO OSCURO
+const modoGuardado = localStorage.getItem("modo")
+if(modoGuardado==="oscuro"){
+  document.body.classList.add("dark")
+}
+
+// SESIÓN
+const movilGuardado = localStorage.getItem("movilSesion")
+const rolGuardado = localStorage.getItem("rolSesion")
+
+if(movilGuardado){
+
+  MOVIL_ACTUAL = movilGuardado
+
+  document.getElementById("loginBox").style.display="none"
+
+  if(rolGuardado==="admin"){
+    document.getElementById("panelAdmin").style.display="block"
+  }else{
+    document.getElementById("panelMovil").style.display="block"
+    document.getElementById("movilNombre").innerText = movilGuardado
+  }
+
+}
+
+})
+
+
+
+
+
+
+
+
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && loginBox.style.display!=="none"){
+entrar()
+}
+
+})
+
+
+
+
+function buscarMantenimiento(){
+
+const texto=document.getElementById("mantenimientoInput").value.toLowerCase()
+
+const contenedor=document.getElementById("listaMantenimientos")
+
+contenedor.innerHTML=""
+
+if(texto.length<1)return
+
+const resultados=listaMantenimientos.filter(m=>
+m.toLowerCase().startsWith(texto)
+)
+
+resultados.forEach(m=>{
+
+const div=document.createElement("div")
+
+div.innerText=m
+div.style.padding="6px"
+div.style.cursor="pointer"
+
+div.onclick=function(){
+document.getElementById("mantenimientoInput").value=m
+contenedor.innerHTML=""
+}
+
+contenedor.appendChild(div)
+
+})
+
+}
+
+
+
+
+
+
+
+
+function verObs(texto){
+
+alert(texto)
+
+}
+
+
+
+
+
+
+function mostrarEstado(){
+
+document.getElementById("historialMant").style.display="none"
+document.getElementById("tablaEstadoContenedor").style.display="table"
+
+btnEstado.classList.add("activo")
+btnHistorial.classList.remove("activo")
+
+}
+
+function mostrarHistorial(){
+
+document.getElementById("historialMant").style.display="block"
+document.getElementById("tablaEstadoContenedor").style.display="none"
+
+btnEstado.classList.remove("activo")
+btnHistorial.classList.add("activo")
+
+}
+
+async function crearUsuario(){
+
+const msg = document.getElementById("msgAdmin")
+
+const data = {
+  action: "crearUsuario",
+  nombre: document.getElementById("nombre").value,
+  placa: document.getElementById("placa").value,
+  clave: document.getElementById("clave").value,
+  celular: document.getElementById("celular").value,
+  rol: document.getElementById("rol").value
+}
+
+if(!data.nombre || !data.placa || !data.clave || !data.celular){
+  msg.innerText = "Completa todos los campos"
+  return
+}
+
+msg.innerText = "Creando usuario..."
+
+try{
+
+const res = await fetch(API_URL,{
+method:"POST",
+body: JSON.stringify(data)
+})
+
+const r = await res.json()
+
+msg.innerText = r.msg || "Usuario creado"
+
+}catch{
+
+msg.innerText = "Error conexión"
+
+}
+
+}
+
+function ocultarAdmin(){
+  document.getElementById("crearUsuarioBox").style.display="none"
+  document.getElementById("usuariosBox").style.display="none"
+  document.getElementById("mantenimientosAdminBox").style.display="none"
+}
+
+function mostrarCrearUsuario(){
+  ocultarAdmin()
+  document.getElementById("crearUsuarioBox").style.display="block"
+}
+
+function mostrarUsuarios(){
+  ocultarAdmin()
+  document.getElementById("usuariosBox").style.display="block"
+  cargarUsuarios()
+}
+
+function mostrarMantenimientosAdmin(){
+  ocultarAdmin()
+  document.getElementById("mantenimientosAdminBox").style.display="block"
+}
+
+
+</script>
+
+</body>
+</html>
