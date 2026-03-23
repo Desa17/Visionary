@@ -682,7 +682,7 @@ body:JSON.stringify({
 action:"guardar",
 movil:MOVIL_ACTUAL,
 kmTacometro:"",
-mantenimientoTexto:mant,
+mantenimientoTexto: mant.replace(/\s+/g, ""),
 kmMantenimiento:km,
 observacion:obs
 })
