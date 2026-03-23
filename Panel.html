@@ -696,6 +696,33 @@ msg.innerText="Error guardando"
 
 }
 
+
+  async function cargarDatosMovil(){
+
+  try{
+
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        action:"datosMovil",
+        movil: MOVIL_ACTUAL
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.ok){
+      document.getElementById("nombreConductor").innerText = data.nombre;
+      document.getElementById("placaMovil").innerText = data.placa;
+      document.getElementById("celularMovil").innerText = data.celular;
+    }
+
+  }catch{
+    console.log("Error cargando datos del móvil");
+  }
+
+}
+
 async function verHojaMovil(){
 
 document.getElementById("formKM").style.display="none"
