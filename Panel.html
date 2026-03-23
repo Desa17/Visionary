@@ -250,7 +250,20 @@ color:white;
 <h2><i class="fa-solid fa-mobile-screen"></i> Panel del Móvil</h2>
 
 <div class="card">
-<strong>Móvil:</strong> <span id="movilNombre"></span>
+
+  <div onclick="toggleInfo()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+    <h3>Móvil: <span id="movilNombre"></span></h3>
+    <i id="iconoInfo" class="fa-solid fa-chevron-down"></i>
+  </div>
+
+  <div id="infoMovil" style="display:none;margin-top:10px;">
+
+    <p><strong>Nombre:</strong> <span id="nombreConductor"></span></p>
+    <p><strong>Placa:</strong> <span id="placaMovil"></span></p>
+    <p><strong>Teléfono:</strong> <span id="celularMovil"></span></p>
+
+  </div>
+
 </div>
 
 <div class="panel-botones">
@@ -947,6 +960,24 @@ function mostrarMantenimientosAdmin(){
 }
 
 
+
+
+function toggleInfo(){
+
+  const box = document.getElementById("infoMovil")
+  const icono = document.getElementById("iconoInfo")
+
+  if(box.style.display === "none"){
+    box.style.display = "block"
+    icono.classList.remove("fa-chevron-down")
+    icono.classList.add("fa-chevron-up")
+  }else{
+    box.style.display = "none"
+    icono.classList.remove("fa-chevron-up")
+    icono.classList.add("fa-chevron-down")
+  }
+
+}
 </script>
 
 </body>
