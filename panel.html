@@ -463,6 +463,22 @@ Salir
 <div id="listaUsuarios"></div>
 </div>
 
+<div id="vehiculosBox" class="card" style="display:none">
+<h3>Vehículos</h3>
+<div id="listaVehiculos"></div>
+</div>
+
+<div id="actualizarVehiculoBox" class="card" style="display:none">
+<h3>Actualizar Vehículo</h3>
+
+<input id="buscarVehiculo" placeholder="Placa">
+
+<button onclick="cargarVehiculo()">Cargar datos</button>
+
+<div id="datosVehiculo"></div>
+
+</div>
+
 <div id="mantenimientosAdminBox" class="card" style="display:none">
 <h3>Mantenimientos</h3>
 <p>Aquí luego puedes ver todos los mantenimientos globales</p>
@@ -997,6 +1013,46 @@ function mostrarUsuarios(){
   ocultarAdmin()
   document.getElementById("usuariosBox").style.display="block"
   cargarUsuarios()
+}
+
+async function cargarUsuarios(){
+
+  const cont = document.getElementById("listaUsuarios")
+  cont.innerHTML = "Cargando..."
+
+  try{
+
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        action:"listarUsuarios"
+      })
+    })
+
+    const data = await res.json()
+
+    cont.innerHTML = data.map(u => `
+      <div class="card">
+        <b>${u.nombre}</b><br>
+        Placa: ${u.placa}<br>
+        Rol: ${u.rol}
+      </div>
+    `).join("")
+
+  }catch{
+    cont.innerHTML = "Error"
+  }
+}
+
+function mostrarVehiculos(){
+  ocultarAdmin()
+  document.getElementById("vehiculosBox").style.display="block"
+  cargarVehiculos()
+}
+
+function mostrarActualizarVehiculo(){
+  ocultarAdmin()
+  document.getElementById("actualizarVehiculoBox").style.display="block"
 }
 
 function mostrarMantenimientosAdmin(){
